@@ -2,7 +2,7 @@ name := "fm-sbt-common"
 
 organization := "com.frugalmechanic"
 
-version := "0.1.0"
+version := "0.2.0-SNAPSHOT"
 
 description := "SBT Plugin with common settings used by Frugal Mechanic for both public and private projects"
 
