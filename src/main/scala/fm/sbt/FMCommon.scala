@@ -72,28 +72,13 @@ object FMCommon extends Plugin {
     }
   )
   
-  import ohnosequences.sbt.SbtS3Resolver._
-  
   // This can be referenced by itself to enable the S3 resolver
-  lazy val FMS3Resolvers = S3Resolver.defaults ++ Seq[Setting[_]](
-    //
-    // S3 Setup
-    //
-    s3region := com.amazonaws.services.s3.model.Region.US_West_2,
-    s3credentials := {
-      file(System.getProperty("user.home")) / ".sbt" / ".frugalmechanic_maven_s3credentials" |
-      new com.amazonaws.auth.EnvironmentVariableCredentialsProvider() |
-      new com.amazonaws.auth.SystemPropertiesCredentialsProvider()
-    },
+  lazy val FMS3Resolvers = Seq[Setting[_]](
     //
     // Enable S3 repositories
     //
-    resolvers <+= s3resolver { _("FrugalMechanic releases", s3("releases.maven.frugalmechanic.com")): Resolver },
-    resolvers <+= s3resolver { _("FrugalMechanic snapshots", s3("snapshots.maven.frugalmechanic.com")): Resolver }
-  
-    //resolvers <++= (version, s3resolver) { (v, resolver) =>
-    //  if (v.trim.endsWith("SNAPSHOT")) Seq[Resolver](resolver("FrugalMechanic snapshots", s3("snapshots.maven.frugalmechanic.com"))) else Nil
-    //}
+    resolvers += "FrugalMechanic Snapshots" at "s3://maven.frugalmechanic.com/snapshots",
+    resolvers += "FrugalMechanic Releases" at "s3://maven.frugalmechanic.com/releases"
   )
   
   // Reference this for private projects
@@ -101,9 +86,9 @@ object FMCommon extends Plugin {
     //
     // Publish to S3
     //
-    publishTo <<= (version, s3resolver) { (v, resolver) =>
-      val prefix: String = if (v.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
-      Some(resolver("FrugalMechanic "+name, s3(prefix+".maven.frugalmechanic.com")))
+    publishTo <<= version { v: String =>
+      val name: String = if (v.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
+      Some("FrugalMechanic "+name.capitalize at "s3://maven.frugalmechanic.com/"+name)
     }
   )
   

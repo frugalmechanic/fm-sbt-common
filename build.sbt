@@ -2,7 +2,7 @@ name := "fm-sbt-common"
 
 organization := "com.frugalmechanic"
 
-version := "0.2.0-SNAPSHOT"
+version := "0.2.0"
 
 description := "SBT Plugin with common settings used by Frugal Mechanic for both public and private projects"
 
@@ -18,11 +18,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.3")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
 
-resolvers += "Era7 maven releases" at "http://releases.era7.com.s3.amazonaws.com"
-
-// This currently isn't on maven central and needs the above resolver.
-// TODO: get this onto maven central so we aren't referencing some random maven repo!
-addSbtPlugin("ohnosequences" % "sbt-s3-resolver" % "0.10.1")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.1.0")
 
 publishMavenStyle := true
 
@@ -49,8 +45,8 @@ pomExtra := (
     </developer>
   </developers>
   <scm>
-      <connection>scm:git:git@github.com:frugalmechanic/fm-lazyseq.git</connection>
-      <developerConnection>scm:git:git@github.com:frugalmechanic/fm-lazyseq.git</developerConnection>
-      <url>git@github.com:frugalmechanic/fm-lazyseq.git</url>
+      <connection>scm:git:git@github.com:frugalmechanic/fm-sbt-common.git</connection>
+      <developerConnection>scm:git:git@github.com:frugalmechanic/fm-sbt-common.git</developerConnection>
+      <url>git@github.com:frugalmechanic/fm-sbt-common.git</url>
   </scm>)
 
