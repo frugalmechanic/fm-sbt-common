@@ -1,6 +1,8 @@
 Frugal Mechanic SBT Common Plugin
 =================================
 
+[![Build Status](https://travis-ci.org/frugalmechanic/fm-sbt-common.svg?branch=master)](https://travis-ci.org/frugalmechanic/fm-sbt-common)
+
 SBT Plugin with common settings used by Frugal Mechanic for both public and private projects
 
 Authors
