@@ -18,6 +18,9 @@ object FMCommon extends Plugin {
     //
     EclipseKeys.withSource := true,
     
+    // Don't use the default "target" directory (which is what SBT uses)
+    EclipseKeys.eclipseOutput := Some(".target"),
+    
     //
     // Enable Sonatype repositories for SNAPSHOT versions only
     //
