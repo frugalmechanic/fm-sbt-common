@@ -2,7 +2,7 @@ name := "fm-sbt-common"
 
 organization := "com.frugalmechanic"
 
-version := "0.5.0"
+version := "0.6.0"
 
 description := "SBT Plugin with common settings used by Frugal Mechanic for both public and private projects"
 
@@ -18,9 +18,16 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.3")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.2.0")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.4.0")
 
 publishMavenStyle := true
+
+resolvers <++= version { v: String =>
+  if (v.trim.endsWith("SNAPSHOT")) Seq(
+    "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
+    "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+  ) else Nil
+}
 
 publishTo <<= version { (v: String) =>
   val nexus = "https://oss.sonatype.org/"
