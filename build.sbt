@@ -2,13 +2,15 @@ name := "fm-sbt-common"
 
 organization := "com.frugalmechanic"
 
-version := "0.6.0"
+version := "0.7.0"
 
 description := "SBT Plugin with common settings used by Frugal Mechanic for both public and private projects"
 
 licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 homepage := Some(url("https://github.com/frugalmechanic/fm-sbt-common"))
+
+scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-Xlint")
 
 sbtPlugin := true
 
@@ -18,7 +20,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.3")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.4.0")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.5.0")
 
 publishMavenStyle := true
 
