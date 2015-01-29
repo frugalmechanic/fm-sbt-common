@@ -2,7 +2,7 @@ name := "fm-sbt-common"
 
 organization := "com.frugalmechanic"
 
-version := "0.7.0"
+version := "0.8.0"
 
 description := "SBT Plugin with common settings used by Frugal Mechanic for both public and private projects"
 
@@ -14,7 +14,7 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-Xlint")
 
 sbtPlugin := true
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.5.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "3.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.3")
 
