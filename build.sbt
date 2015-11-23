@@ -2,7 +2,7 @@ name := "fm-sbt-common"
 
 organization := "com.frugalmechanic"
 
-version := "0.11.0-SNAPSHOT"
+version := "0.11.0"
 
 description := "SBT Plugin with common settings used by Frugal Mechanic for both public and private projects"
 
@@ -14,13 +14,13 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-Xlint")
 
 sbtPlugin := true
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "3.0.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.6.0")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.7.0")
 
 publishMavenStyle := true
 
