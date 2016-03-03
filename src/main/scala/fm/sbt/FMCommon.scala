@@ -85,9 +85,18 @@ object FMCommon extends AutoPlugin {
       resolvers += "FrugalMechanic Snapshots" atS3 "s3://maven.frugalmechanic.com/snapshots",
       resolvers += "FrugalMechanic Releases" atS3 "s3://maven.frugalmechanic.com/releases"
     )
-  
+
+    // This can be referenced by itself to enable the S3 resolver
+    lazy val TAS3Resolvers = Seq[Setting[_]](
+      //
+      // Enable S3 repositories
+      //
+      resolvers += "TecAlliance Snapshots" atS3 "s3://maven.tecalliance.services/snapshots",
+      resolvers += "TecAlliance Releases" atS3 "s3://maven.tecalliance.services/releases"
+    )
+
     // Reference this for private projects
-    lazy val FMPrivate = sharedSettings ++ FMS3Resolvers ++ Seq[Setting[_]](    
+    lazy val FMPrivate = sharedSettings ++ FMS3Resolvers ++ TAS3Resolvers ++ Seq[Setting[_]](
       //
       // Publish to S3
       //
@@ -96,7 +105,30 @@ object FMCommon extends AutoPlugin {
         Some("FrugalMechanic "+name.capitalize+" Publish" atS3 "s3://maven.frugalmechanic.com/"+name)
       }
     )
-  
+
+    // Reference this for private projects
+    lazy val TAPrivate = sharedSettings ++ TAS3Resolvers ++ Seq[Setting[_]](
+      //
+      // Basic Project Settings
+      //
+      organization := "com.eluvio", // All of these shared packages are currently using the com.frugalmechanic org
+      //
+      // Publish to S3
+      //
+      publishTo <<= version { v: String =>
+        val name: String = if (v.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
+        Some("TecAlliance "+name.capitalize+" Publish" atS3 "s3://maven.tecalliance.services/"+name)
+      }
+    )
+
+    // Re-use the TA maven repo to publish shared, but non-public projects that use the com.frugalmechanic organization
+    lazy val FMShared = TAPrivate ++ Seq[Setting[_]](
+      organization := "com.frugalmechanic" // override the com.eluvio organization in TAPrivate
+    )
+
+    // Re-use the TA maven repo to publish shared, but non-public projects that use the com.eluvio organization
+    lazy val EluvioShared = TAPrivate
+
     //
     // Proguard Settings
     //
