@@ -20,7 +20,7 @@ addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.7.0")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.9.0")
 
 publishMavenStyle := true
 
