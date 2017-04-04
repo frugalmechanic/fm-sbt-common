@@ -10,7 +10,20 @@ licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/lice
 
 homepage := Some(url("https://github.com/frugalmechanic/fm-sbt-common"))
 
-scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-Xlint")
+scalacOptions := Seq(
+  "-encoding", "UTF-8",
+  "-unchecked",
+  "-deprecation",
+  "-language:implicitConversions",
+  "-feature",
+  "-Xlint"
+) ++ (if (scalaVersion.value.startsWith("2.11")) Seq(
+  // Scala 2.11 specific compiler flags
+  "-Ywarn-unused-import"
+) else Nil) ++ (if (scalaVersion.value.startsWith("2.12")) Seq(
+  // Scala 2.12 specific compiler flags
+  "-opt:l:project"
+) else Nil)
 
 sbtPlugin := true
 
