@@ -2,9 +2,9 @@ name := "fm-sbt-common"
 
 organization := "com.frugalmechanic"
 
-version := "0.12.0"
+version := "0.13.0"
 
-description := "SBT Plugin with common settings used by Frugal Mechanic for both public and private projects"
+description := "SBT Plugin with common settings used by Frugal Mechanic / Eluvio for both public and private projects"
 
 licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
@@ -27,13 +27,13 @@ scalacOptions := Seq(
 
 sbtPlugin := true
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.1.0")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.1")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.9.0")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.10.0")
 
 publishMavenStyle := true
 
@@ -61,9 +61,9 @@ pomExtra := (
     <developer>
       <id>tim</id>
       <name>Tim Underwood</name>
-      <email>tim@frugalmechanic.com</email>
-      <organization>Frugal Mechanic</organization>
-      <organizationUrl>http://frugalmechanic.com</organizationUrl>
+      <email>tim@eluvio.com</email>
+      <organization>Eluvio</organization>
+      <organizationUrl>https://www.eluvio.com</organizationUrl>
     </developer>
   </developers>
   <scm>

@@ -6,7 +6,7 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import fm.sbt.S3Implicits._
 
 object FMCommon extends AutoPlugin {
-  private val ProguardVersion: String = "5.2.1"
+  private val ProguardVersion: String = "5.3.1"
   
   private lazy val sharedSettings = Seq[Setting[_]](  
     //
