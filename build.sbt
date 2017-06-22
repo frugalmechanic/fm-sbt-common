@@ -2,8 +2,6 @@ name := "fm-sbt-common"
 
 organization := "com.frugalmechanic"
 
-version := "0.13.0"
-
 description := "SBT Plugin with common settings used by Frugal Mechanic / Eluvio for both public and private projects"
 
 licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
