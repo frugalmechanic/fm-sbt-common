@@ -25,30 +25,52 @@ scalacOptions := Seq(
 
 sbtPlugin := true
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.1.0")
-
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.1")
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
-
 addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.10.0")
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.5")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.1")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.1.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "1.1")
+
+// Tell the sbt-release plugin to use publishSigned
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 publishMavenStyle := true
 
-resolvers <++= version { v: String =>
-  if (v.trim.endsWith("SNAPSHOT")) Seq(
+resolvers ++= {
+  if (version.value.trim.endsWith("SNAPSHOT")) Seq(
     "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
   ) else Nil
 }
 
-publishTo <<= version { (v: String) =>
+publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  if (v.trim.endsWith("SNAPSHOT")) 
-    Some("snapshots" at nexus + "content/repositories/snapshots") 
-  else
+  if (version.value.trim.endsWith("SNAPSHOT")) {
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  } else {
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+  }
 }
+
+// From: https://github.com/xerial/sbt-sonatype#using-with-sbt-release-plugin
+import ReleaseTransformations._
+
+// From: https://github.com/xerial/sbt-sonatype#using-with-sbt-release-plugin
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  ReleaseStep(action = Command.process("publishSigned", _)),
+  setNextVersion,
+  commitNextVersion,
+  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  pushChanges
+)
 
 publishArtifact in Test := false
 

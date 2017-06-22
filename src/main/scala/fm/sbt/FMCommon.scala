@@ -5,10 +5,17 @@ import Keys._
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import fm.sbt.S3Implicits._
 
+// This is for the sbt-pgp plugin
+import com.typesafe.sbt.SbtPgp.autoImport.PgpKeys
+
+// This is for the sbt-release plugin
+import sbtrelease.ReleasePlugin.autoImport._
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+
 object FMCommon extends AutoPlugin {
   private val ProguardVersion: String = "5.3.1"
   
-  private lazy val sharedSettings = Seq[Setting[_]](  
+  private lazy val sharedSettings = Seq[Setting[_]](
     //
     // Basic Project Settings
     //
@@ -25,8 +32,8 @@ object FMCommon extends AutoPlugin {
     //
     // Enable Sonatype repositories for SNAPSHOT versions only
     //
-    resolvers <++= version { v: String =>
-      if (v.trim.endsWith("SNAPSHOT")) Seq(
+    resolvers ++= {
+      if (version.value.trim.endsWith("SNAPSHOT")) Seq(
         "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
         "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
       ) else Nil
@@ -37,7 +44,13 @@ object FMCommon extends AutoPlugin {
     //
     publishMavenStyle := true,
     publishArtifact in Test := false,
-    pomIncludeRepository := { _ => false }
+    pomIncludeRepository := { _ => false },
+    
+    // Tell the sbt-release plugin to use puglishSigned
+    releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+    
+    // Enable cross building for the sbt-release plugin
+    releaseCrossBuild := true
   )
 
   object autoImport {
@@ -46,20 +59,36 @@ object FMCommon extends AutoPlugin {
       //
       // Basic Project Settings
       //
-      homepage <<= (name){ projectName: String => Some(url(s"https://github.com/frugalmechanic/${projectName}")) },
+      homepage := Some(url(s"https://github.com/frugalmechanic/${name.value}")),
       licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     
       //
       // Publish Settings
       //
-      publishTo <<= version { v: String =>
+      publishTo := {
         val nexus = "https://oss.sonatype.org/"
-        if (v.trim.endsWith("SNAPSHOT"))
+        if (version.value.trim.endsWith("SNAPSHOT")) {
           Some("snapshots" at nexus + "content/repositories/snapshots") 
-        else
+        } else {
           Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+        }
       },
-      pomExtra <<= (name){ projectName: String =>
+      // From: https://github.com/xerial/sbt-sonatype#using-with-sbt-release-plugin
+      releaseProcess := Seq[ReleaseStep](
+        checkSnapshotDependencies,
+        inquireVersions,
+        runClean,
+        runTest,
+        setReleaseVersion,
+        commitReleaseVersion,
+        tagRelease,
+        ReleaseStep(action = Command.process("publishSigned", _), enableCrossBuild = true),
+        setNextVersion,
+        commitNextVersion,
+        ReleaseStep(action = Command.process("sonatypeReleaseAll", _), enableCrossBuild = true),
+        pushChanges
+      ),
+      pomExtra := {
         <developers>
           <developer>
             <id>tim</id>
@@ -70,9 +99,9 @@ object FMCommon extends AutoPlugin {
           </developer>
         </developers>
         <scm>
-            <connection>scm:git:git@github.com:frugalmechanic/{projectName}.git</connection>
-            <developerConnection>scm:git:git@github.com:frugalmechanic/{projectName}.git</developerConnection>
-            <url>git@github.com:frugalmechanic/{projectName}.git</url>
+            <connection>scm:git:git@github.com:frugalmechanic/{name.value}.git</connection>
+            <developerConnection>scm:git:git@github.com:frugalmechanic/{name.value}.git</developerConnection>
+            <url>git@github.com:frugalmechanic/{name.value}.git</url>
         </scm>
       }
     )
@@ -100,8 +129,8 @@ object FMCommon extends AutoPlugin {
       //
       // Publish to S3
       //
-      publishTo <<= version { v: String =>
-        val name: String = if (v.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
+      publishTo := {
+        val name: String = if (version.value.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
         Some("FrugalMechanic "+name.capitalize+" Publish" atS3 "s3://maven.frugalmechanic.com/"+name)
       }
     )
@@ -115,8 +144,8 @@ object FMCommon extends AutoPlugin {
       //
       // Publish to S3
       //
-      publishTo <<= version { v: String =>
-        val name: String = if (v.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
+      publishTo := {
+        val name: String = if (version.value.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
         Some("TecAlliance "+name.capitalize+" Publish" atS3 "s3://maven.tecalliance.services/"+name)
       }
     )
@@ -158,19 +187,15 @@ object FMCommon extends AutoPlugin {
     
       // Program inputs to Proguard are any dependencies in the "embedded" scope as well as our packaged Jar.
       // All other dependencies will be used as library inputs.
-      ProguardKeys.inputs in Proguard <<= (dependencyClasspath in Embedded, packageBin in Runtime) map { 
-        (dcp, pb) => Seq(pb) ++ dcp.files
-      },
+      ProguardKeys.inputs in Proguard := Seq((packageBin in Runtime).value) ++ (dependencyClasspath in Embedded).value.files,
     
-      publishMinJar <<= (ProguardKeys.proguard in Proguard) map { _.head }, 
+      publishMinJar := (ProguardKeys.proguard in Proguard).value.head,
        
-      packagedArtifact in (Compile, packageBin) <<= (packagedArtifact in (Compile, packageBin), publishMinJar) map {
-        case ((art, _), jar) => (art, jar)
-      },
+      packagedArtifact in (Compile, packageBin) := Tuple2((packagedArtifact in (Compile, packageBin)).value._1, publishMinJar.value),
     
       // Add the dependencies marked "embedded" to the Compile and Test scopes
-      dependencyClasspath in Compile <++= dependencyClasspath in Embedded,
-      dependencyClasspath in Test <++= dependencyClasspath in Embedded,
+      dependencyClasspath in Compile ++= (dependencyClasspath in Embedded).value,
+      dependencyClasspath in Test ++= (dependencyClasspath in Embedded).value,
     
       // We need the generated eclipse files to also include the "embedded" dependency libraries.
       // Set(Compile, Test) is the default
