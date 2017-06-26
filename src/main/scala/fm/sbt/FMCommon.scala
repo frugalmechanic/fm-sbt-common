@@ -17,11 +17,6 @@ object FMCommon extends AutoPlugin {
   
   private lazy val sharedSettings = Seq[Setting[_]](
     //
-    // Basic Project Settings
-    //
-    organization := "com.frugalmechanic",
-    
-    //
     // Eclipse Plugin Settings
     //
     EclipseKeys.withSource := true,
@@ -54,14 +49,68 @@ object FMCommon extends AutoPlugin {
   )
 
   object autoImport {
-    // Reference this for Public projects
-    lazy val FMPublic = sharedSettings ++ Seq[Setting[_]](
+    // Reference this for Public Eluvio projects
+    lazy val EluvioPublic = sharedSettings ++ SharedPublicSettings ++ Seq[Setting[_]](
       //
       // Basic Project Settings
       //
-      homepage := Some(url(s"https://github.com/frugalmechanic/${name.value}")),
-      licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+      organization := "com.eluvio",
+      homepage := Some(url(s"https://github.com/eluvio/${name.value}")),
+      //
+      // Publish Settings
+      //
+      pomExtra := {
+        <developers>
+          <developer>
+            <id>tim</id>
+            <name>Tim Underwood</name>
+            <email>tim@eluvio.com</email>
+            <organization>Eluvio</organization>
+            <organizationUrl>http://www.eluvio.com</organizationUrl>
+          </developer>
+        </developers>
+        <scm>
+            <connection>scm:git:git@github.com:eluvio/{name.value}.git</connection>
+            <developerConnection>scm:git:git@github.com:eluvio/{name.value}.git</developerConnection>
+            <url>git@github.com:eluvio/{name.value}.git</url>
+        </scm>
+      }
+    )
     
+    // Reference this for Public FrugalMechanic projects
+    lazy val FMPublic = sharedSettings ++ SharedPublicSettings ++ Seq[Setting[_]](
+      //
+      // Basic Project Settings
+      //
+      organization := "com.frugalmechanic",
+      homepage := Some(url(s"https://github.com/frugalmechanic/${name.value}")),
+      //
+      // Publish Settings
+      //
+      pomExtra := {
+        <developers>
+          <developer>
+            <id>tim</id>
+            <name>Tim Underwood</name>
+            <email>tim@frugalmechanic.com</email>
+            <organization>Frugal Mechanic</organization>
+            <organizationUrl>http://frugalmechanic.com</organizationUrl>
+          </developer>
+        </developers>
+        <scm>
+            <connection>scm:git:git@github.com:frugalmechanic/{name.value}.git</connection>
+            <developerConnection>scm:git:git@github.com:frugalmechanic/{name.value}.git</developerConnection>
+            <url>git@github.com:frugalmechanic/{name.value}.git</url>
+        </scm>
+      }
+    )
+    
+    private lazy val SharedPublicSettings = sharedSettings ++ Seq[Setting[_]](
+      //
+      // Basic Project Settings
+      //
+      licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+
       //
       // Publish Settings
       //
@@ -87,23 +136,7 @@ object FMCommon extends AutoPlugin {
         commitNextVersion,
         ReleaseStep(action = Command.process("sonatypeReleaseAll", _), enableCrossBuild = true),
         pushChanges
-      ),
-      pomExtra := {
-        <developers>
-          <developer>
-            <id>tim</id>
-            <name>Tim Underwood</name>
-            <email>tim@frugalmechanic.com</email>
-            <organization>Frugal Mechanic</organization>
-            <organizationUrl>http://frugalmechanic.com</organizationUrl>
-          </developer>
-        </developers>
-        <scm>
-            <connection>scm:git:git@github.com:frugalmechanic/{name.value}.git</connection>
-            <developerConnection>scm:git:git@github.com:frugalmechanic/{name.value}.git</developerConnection>
-            <url>git@github.com:frugalmechanic/{name.value}.git</url>
-        </scm>
-      }
+      )
     )
   
     // This can be referenced by itself to enable the S3 resolver
@@ -126,6 +159,10 @@ object FMCommon extends AutoPlugin {
 
     // Reference this for private projects
     lazy val FMPrivate = sharedSettings ++ FMS3Resolvers ++ TAS3Resolvers ++ Seq[Setting[_]](
+      //
+      // Basic Project Settings
+      //
+      organization := "com.frugalmechanic",
       //
       // Publish to S3
       //
