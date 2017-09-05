@@ -2,7 +2,7 @@ package fm.sbt
 
 import sbt._
 import Keys._
-import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
+// import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import fm.sbt.S3Implicits._
 
 // This is for the sbt-pgp plugin
@@ -13,16 +13,16 @@ import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
 object FMCommon extends AutoPlugin {
-  private val ProguardVersion: String = "5.3.1"
+  // private val ProguardVersion: String = "5.3.1"
   
   private lazy val sharedSettings = Seq[Setting[_]](
-    //
-    // Eclipse Plugin Settings
-    //
-    EclipseKeys.withSource := true,
-    
-    // Don't use the default "target" directory (which is what SBT uses)
-    EclipseKeys.eclipseOutput := Some(".target"),
+    // //
+    // // Eclipse Plugin Settings
+    // //
+    // EclipseKeys.withSource := true,
+    // 
+    // // Don't use the default "target" directory (which is what SBT uses)
+    // EclipseKeys.eclipseOutput := Some(".target"),
     
     //
     // Enable Sonatype repositories for SNAPSHOT versions only
@@ -122,6 +122,7 @@ object FMCommon extends AutoPlugin {
           Some("releases"  at nexus + "service/local/staging/deploy/maven2")
         }
       },
+      releaseCrossBuild := true,
       // From: https://github.com/xerial/sbt-sonatype#using-with-sbt-release-plugin
       releaseProcess := Seq[ReleaseStep](
         checkSnapshotDependencies,
@@ -131,10 +132,10 @@ object FMCommon extends AutoPlugin {
         setReleaseVersion,
         commitReleaseVersion,
         tagRelease,
-        ReleaseStep(action = Command.process("publishSigned", _), enableCrossBuild = true),
+        releaseStepCommandAndRemaining("publishSigned"),
         setNextVersion,
         commitNextVersion,
-        ReleaseStep(action = Command.process("sonatypeReleaseAll", _), enableCrossBuild = true),
+        releaseStepCommand("sonatypeReleaseAll"),
         pushChanges
       )
     )
@@ -200,43 +201,43 @@ object FMCommon extends AutoPlugin {
     //
     // Modeled after https://github.com/rtimush/sbt-updates/blob/master/proguard.sbt
     //
-    import com.typesafe.sbt.SbtProguard.{Proguard, ProguardKeys, proguardSettings}
+    // import com.typesafe.sbt.SbtProguard.{Proguard, ProguardKeys, proguardSettings}
   
-    val publishMinJar = TaskKey[File]("publish-min-jar")
+    // val publishMinJar = TaskKey[File]("publish-min-jar")
   
     // Dependencies marked as "embedded" will be used as program inputs to Proguard
-    val Embedded = config("embedded").hide
+    // val Embedded = config("embedded").hide
   
-    lazy val `sbt-updates` = project in file(".") settings(
-      Defaults.coreDefaultSettings ++
-      inConfig(Embedded)(Defaults.configSettings): _*
-    ) configs Embedded
+    // lazy val `sbt-updates` = project in file(".") settings(
+    //   Defaults.coreDefaultSettings ++
+    //   inConfig(Embedded)(Defaults.configSettings): _*
+    // ) configs Embedded
   
-    // This enables the default proguard settings plus adds our own
-    lazy val FMProguardSettings = proguardSettings ++ inConfig(Embedded)(Defaults.configSettings) ++ Seq[Setting[_]](
-      ivyConfigurations += Embedded,
-    
-      // Give the proguard process more memory
-      javaOptions in (Proguard, ProguardKeys.proguard) := Seq("-Xmx1024M", "-Dfile.encoding=UTF8"),
-    
-      // Use the Proguard Version specified at the top of this file
-      ProguardKeys.proguardVersion in Proguard := ProguardVersion,
-    
-      // Program inputs to Proguard are any dependencies in the "embedded" scope as well as our packaged Jar.
-      // All other dependencies will be used as library inputs.
-      ProguardKeys.inputs in Proguard := Seq((packageBin in Runtime).value) ++ (dependencyClasspath in Embedded).value.files,
-    
-      publishMinJar := (ProguardKeys.proguard in Proguard).value.head,
-       
-      packagedArtifact in (Compile, packageBin) := Tuple2((packagedArtifact in (Compile, packageBin)).value._1, publishMinJar.value),
-    
-      // Add the dependencies marked "embedded" to the Compile and Test scopes
-      dependencyClasspath in Compile ++= (dependencyClasspath in Embedded).value,
-      dependencyClasspath in Test ++= (dependencyClasspath in Embedded).value,
-    
-      // We need the generated eclipse files to also include the "embedded" dependency libraries.
-      // Set(Compile, Test) is the default
-      EclipseKeys.configurations := Set(Compile, Test, Embedded)
-    )
+    // // This enables the default proguard settings plus adds our own
+    // lazy val FMProguardSettings = proguardSettings ++ inConfig(Embedded)(Defaults.configSettings) ++ Seq[Setting[_]](
+    //   ivyConfigurations += Embedded,
+    // 
+    //   // Give the proguard process more memory
+    //   javaOptions in (Proguard, ProguardKeys.proguard) := Seq("-Xmx1024M", "-Dfile.encoding=UTF8"),
+    // 
+    //   // Use the Proguard Version specified at the top of this file
+    //   ProguardKeys.proguardVersion in Proguard := ProguardVersion,
+    // 
+    //   // Program inputs to Proguard are any dependencies in the "embedded" scope as well as our packaged Jar.
+    //   // All other dependencies will be used as library inputs.
+    //   ProguardKeys.inputs in Proguard := Seq((packageBin in Runtime).value) ++ (dependencyClasspath in Embedded).value.files,
+    // 
+    //   publishMinJar := (ProguardKeys.proguard in Proguard).value.head,
+    //    
+    //   packagedArtifact in (Compile, packageBin) := Tuple2((packagedArtifact in (Compile, packageBin)).value._1, publishMinJar.value),
+    // 
+    //   // Add the dependencies marked "embedded" to the Compile and Test scopes
+    //   dependencyClasspath in Compile ++= (dependencyClasspath in Embedded).value,
+    //   dependencyClasspath in Test ++= (dependencyClasspath in Embedded).value,
+    // 
+    //   // We need the generated eclipse files to also include the "embedded" dependency libraries.
+    //   // Set(Compile, Test) is the default
+    //   EclipseKeys.configurations := Set(Compile, Test, Embedded)
+    // )
   }
 }

@@ -20,17 +20,18 @@ scalacOptions := Seq(
   "-Ywarn-unused-import"
 ) else Nil) ++ (if (scalaVersion.value.startsWith("2.12")) Seq(
   // Scala 2.12 specific compiler flags
-  "-opt:l:project"
+  "-opt:l:method,inline",
+  "-opt-inline-from:scala.Predef$:<sources>",
 ) else Nil)
 
 sbtPlugin := true
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.10.0")
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.5")
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.1")
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.1.0")
-addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "1.1")
+crossSbtVersions := Vector("0.13.16", "1.0.1")
+
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.12.0")
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.6")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.0")
 
 // Tell the sbt-release plugin to use publishSigned
 releasePublishArtifactsAction := PgpKeys.publishSigned.value
@@ -61,14 +62,14 @@ releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
-  runTest,
+  releaseStepCommandAndRemaining("^ test"),
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  ReleaseStep(action = Command.process("publishSigned", _)),
+  releaseStepCommandAndRemaining("^ publishSigned"),
   setNextVersion,
   commitNextVersion,
-  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  releaseStepCommand("sonatypeReleaseAll"),
   pushChanges
 )
 
