@@ -38,10 +38,14 @@ releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 publishMavenStyle := true
 
+// Always add the Sonatype Releases repository so we don't have to wait for
+// things to sync to Maven central
+resolvers += Resolver.sonatypeRepo("releases")
+
+// Enable Sonatype snapshots repository for SNAPSHOT versions only
 resolvers ++= {
   if (version.value.trim.endsWith("SNAPSHOT")) Seq(
-    "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
-    "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+    Resolver.sonatypeRepo("snapshots")
   ) else Nil
 }
 
