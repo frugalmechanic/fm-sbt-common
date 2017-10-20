@@ -26,7 +26,7 @@ scalacOptions := Seq(
 
 sbtPlugin := true
 
-crossSbtVersions := Vector("0.13.16", "1.0.1")
+crossSbtVersions := Vector("0.13.16", "1.0.2")
 
 addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.12.0")
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.6")
