@@ -137,7 +137,7 @@ object FMCommon extends AutoPlugin {
         setReleaseVersion,
         commitReleaseVersion,
         tagRelease,
-        releaseStepCommandAndRemaining("publishSigned"),
+        ReleaseStep(action = releaseStepCommandAndRemaining("publishSigned"), enableCrossBuild = true),
         setNextVersion,
         commitNextVersion,
         releaseStepCommand("sonatypeReleaseAll"),
