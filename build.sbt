@@ -26,10 +26,10 @@ scalacOptions := Seq(
 
 sbtPlugin := true
 
-crossSbtVersions := Vector("0.13.16", "1.0.2")
+crossSbtVersions := Vector("0.13.16", "1.1.0")
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.13.0")
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.6")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.14.0")
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.7")
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.0")
 
