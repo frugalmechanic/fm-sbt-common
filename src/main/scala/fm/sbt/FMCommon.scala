@@ -34,7 +34,7 @@ object FMCommon extends AutoPlugin {
     // Enable Sonatype snapshots repository for SNAPSHOT versions only
     //    
     resolvers ++= {
-      if (version.value.trim.endsWith("SNAPSHOT")) Seq(
+      if (version.value.trim.contains("SNAPSHOT")) Seq(
         Resolver.sonatypeRepo("snapshots")
       ) else Nil
     },
@@ -121,7 +121,7 @@ object FMCommon extends AutoPlugin {
       //
       publishTo := {
         val nexus = "https://oss.sonatype.org/"
-        if (version.value.trim.endsWith("SNAPSHOT")) {
+        if (version.value.trim.contains("SNAPSHOT")) {
           Some("snapshots" at nexus + "content/repositories/snapshots") 
         } else {
           Some("releases"  at nexus + "service/local/staging/deploy/maven2")
@@ -173,7 +173,7 @@ object FMCommon extends AutoPlugin {
       // Publish to S3
       //
       publishTo := {
-        val name: String = if (version.value.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
+        val name: String = if (version.value.trim.contains("SNAPSHOT")) "snapshots" else "releases"
         Some("FrugalMechanic "+name.capitalize+" Publish" atS3 "s3://maven.frugalmechanic.com/"+name)
       }
     )
@@ -188,7 +188,7 @@ object FMCommon extends AutoPlugin {
       // Publish to S3
       //
       publishTo := {
-        val name: String = if (version.value.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"
+        val name: String = if (version.value.trim.contains("SNAPSHOT")) "snapshots" else "releases"
         Some("TecAlliance "+name.capitalize+" Publish" atS3 "s3://maven.tecalliance.services/"+name)
       }
     )
