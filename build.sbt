@@ -26,12 +26,13 @@ scalacOptions := Seq(
 
 sbtPlugin := true
 
-crossSbtVersions := Vector("0.13.16", "1.1.0")
+crossSbtVersions := Vector("0.13.17", "1.1.6")
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.14.0")
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.7")
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.0")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.16.0")
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.9")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.1")
+//addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "0.1.18") // TODO: hook this up
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.3")
 
 // Tell the sbt-release plugin to use publishSigned
 releasePublishArtifactsAction := PgpKeys.publishSigned.value

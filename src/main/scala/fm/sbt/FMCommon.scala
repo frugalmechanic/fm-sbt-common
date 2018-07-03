@@ -135,6 +135,7 @@ object FMCommon extends AutoPlugin {
         runClean,
         runTest,
         setReleaseVersion,
+        //releaseStepCommandAndRemaining("+mimaReportBinaryIssues"), // TODO: hook this up
         commitReleaseVersion,
         tagRelease,
         ReleaseStep(action = releaseStepCommandAndRemaining("publishSigned"), enableCrossBuild = true),
