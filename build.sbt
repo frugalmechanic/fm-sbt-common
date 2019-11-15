@@ -40,8 +40,9 @@ releasePublishArtifactsAction := PgpKeys.publishSigned.value
 publishMavenStyle := true
 
 // Always add the Sonatype Releases repository so we don't have to wait for
-// things to sync to Maven central
-resolvers += Resolver.sonatypeRepo("releases")
+// things to sync to Maven central.
+// 2019 - Sonatype now just redirects to Maven Central so this is not needed
+//resolvers += Resolver.sonatypeRepo("releases")
 
 // Enable Sonatype snapshots repository for SNAPSHOT versions only
 resolvers ++= {
