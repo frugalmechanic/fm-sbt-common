@@ -28,7 +28,7 @@ sbtPlugin := true
 
 crossSbtVersions := Vector("0.13.17", "1.2.3")
 
-addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.17.0")
+addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.19.0")
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.9")
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.1")
 //addSbtPlugin("com.typesafe" % "sbt-mima-plugin" % "0.1.18") // TODO: hook this up
